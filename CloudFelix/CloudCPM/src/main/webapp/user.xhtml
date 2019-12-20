@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+<h:head>
+	<title>PrimeFaces 7.0</title>
+</h:head>
+<h:body>
+	<p:outputPanel>
+		<ui:insert name="header">
+			<ui:include src="/WEB-INF/common/header.xhtml" />
+		</ui:insert>
+		<div class="ui-g">
+			<div class="ui-g-2"></div>
+			<div class="ui-g-8">
+				<h1 style="text-align: center">#{empty userBean.id?'Create a new user':'Update user'}</h1>
+				<p:panel id="order" header="Enter user data"
+					style="margin-bottom:20px">
+					<h:panelGrid columns="1" cellpadding="10">
+						<h:form id="formId">
+							<p:growl id="msgs" showDetail="true" sticky="true" />
+
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:outputLabel for="group" value="Group:" />
+								<p:selectManyMenu id="group" value="#{userBean.selectedGroups}" converter="#{groupConverter}"
+						                       requiredMessage="Group is required" validatorMessage="Group is invalid"    var="t" filter="true" filterMatchMode="contains" showCheckbox="true">
+						            <f:selectItems value="#{userBean.availableGroups}"
+										var="group" itemLabel="#{group.name}"
+										itemValue="#{group}" />
+									<p:column>
+										<h:outputText value="#{t.code}" />
+									</p:column>
+									<p:column>
+										<h:outputText value="#{t.name}" />
+									</p:column>
+						        </p:selectManyMenu>
+
+								<p:outputLabel for="type" value="Role:" />
+								<p:selectOneButton id="type" requiredMessage="Role is required"
+									value="#{userBean.type}" required="true">
+									<f:selectItem itemLabel="Admin" itemValue="#{0}" />
+									<f:selectItem itemLabel="CSKH" itemValue="#{1}" />
+									<f:selectItem itemLabel="Sale" itemValue="#{2}" />
+								</p:selectOneButton>
+
+								<p:outputLabel for="code" value="Username:" />
+								<p:inputText id="code" value="#{userBean.code}"
+									required="true"  />
+									
+								<p:outputLabel for="password" value="Password:" />
+								<p:password id="password" value="#{userBean.password}"
+									required="true"  />
+								<p:outputLabel for="name" value="Name:" />
+								<p:inputText id="name" value="#{userBean.name}"
+									required="false" requiredMessage="Tên phai khac null"/>	
+								<p:outputLabel for="email" value="Email:" />
+								<p:inputText id="email" value="#{userBean.email}"
+									required="false" placeholder="example@gmail.com" />
+									
+								<p:outputLabel for="phone" value="Phone:" />
+								<p:inputText id="phone" value="#{userBean.phone}"
+									required="false" placeholder="0987654321" />
+
+
+								<p:outputLabel for="gender" value="Gender:" />
+								<p:selectOneRadio id="gender" required="true" requiredMessage="Gender is required" value="#{userBean.gender}">
+						            <f:selectItem itemLabel="Female" itemValue="#{0}" />
+						            <f:selectItem itemLabel="Male" itemValue="#{1}" />
+						        </p:selectOneRadio>
+
+								<p:outputLabel for="birthday" value="Birthdate:" />
+								<p:datePicker id="birthday"
+									value="#{userBean.birthday}" showIcon="true" converterMessage="Birthday is invalid"
+									required="true"  requiredMessage="Birthday is required"/>
+							</h:panelGrid>
+							<h:inputHidden  id="id" value="#{userBean.id}" />
+							<p:commandButton value="Reset" type="reset" />
+							<p:commandButton value="Create user" rendered="#{empty userBean.id}"
+								action="#{userBean.createUser}" icon="pi pi-check"
+								update="@form" />
+							<p:commandButton value="Update user" rendered="#{not empty userBean.id}"
+								action="#{userBean.updateUser}" icon="pi pi-check" 
+								update="@form" /> 
+							<p:commandButton value="Generate 50000 User"  
+								action="#{userBean.generateUser}" icon="pi pi-check"
+								process="@this" update="@form" />
+						</h:form>
+					</h:panelGrid>
+				</p:panel>
+			</div>
+			<div class="ui-g-2" />
+		</div>
+		<ui:insert name="footer">
+			<ui:include src="/WEB-INF/common/footer.xhtml" />
+		</ui:insert>
+	</p:outputPanel>
+</h:body>
+</html>

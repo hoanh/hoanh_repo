@@ -1,0 +1,202 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions">
+<h:head>
+	<title>PrimeFaces 7.0</title>
+	<h:outputStylesheet>
+            .ui-datatable .ui-datatable-header {
+        		text-align: right !important;
+		    }
+		     
+		    .ui-button-text-only .ui-button-text {
+		        padding: 0.3em 0.4em;
+		    }
+		     
+		    .ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header .ui-chkbox {
+		        visibility: hidden;
+		    }
+		     
+		    .ui-filter-column .ui-column-customfilter .custom-filter {
+		        width: 100%;
+		        box-sizing: border-box;
+		    }
+		    
+		    .ui-datatable .ui-datatable-footer {
+		        text-align:left;
+		    }
+		     
+		    .ui-datalist ul {
+		        padding: 0 0 0 10px;
+		        margin: 5px 0;
+		    }
+		     
+		    .ui-datatable .ui-button-icon-only .ui-button-text {
+		        padding: 0;
+		        line-height: 1.2;
+		    }
+        </h:outputStylesheet>
+</h:head>
+
+<h:body>
+	<p:outputPanel>
+		<ui:insert name="header">
+			<ui:include src="/WEB-INF/common/header.xhtml" />
+		</ui:insert>
+		<div class="ui-g">
+			<div class="ui-g-2"></div>
+			<div class="ui-g-8">
+			<h1 style="text-align: center">Search form</h1>
+			<p:panel id="order" header="Enter data"
+					style="margin-bottom:20px">
+					<h:panelGrid columns="1" cellpadding="10">
+						<h:form id="formId">
+							<p:growl id="msgs" showDetail="true" sticky="true" />
+
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:outputLabel for="group" value="Group:" />
+								<p:selectOneMenu id="group" value="#{userListBean.groupId}"  filter="true" filterMatchMode="contains">
+						            <f:selectItem itemLabel="Select" itemValue="#{null}" />
+						            <f:selectItems value="#{userListBean.groups}"
+										var="group" itemLabel="#{group.name}"
+										itemValue="#{group.id}" />
+									
+						        </p:selectOneMenu>
+
+								<p:outputLabel for="type" value="Supplier:" />
+								<p:selectOneMenu id="type" value="#{userListBean.supplierId}"  filter="true" filterMatchMode="contains">
+									<f:selectItem itemLabel="Select" itemValue="#{null}" />
+									<f:selectItems value="#{userListBean.suppliers}"
+										var="soup" itemLabel="#{soup.name}"
+										itemValue="#{soup.id}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="code" value="Username:" />
+								<p:inputText id="code" value="#{userListBean.code}"
+									required="false"  />
+									
+								<p:outputLabel for="name" value="Name:" />
+								<p:inputText id="name" value="#{userListBean.name}"
+									required="false" requiredMessage="Tên phai khac null"/>	
+								<p:outputLabel for="email" value="Email:" />
+								<p:inputText id="email" value="#{userListBean.email}"
+									required="false"  />
+									
+								<p:outputLabel for="phone" value="Phone:" />
+								<p:inputText id="phone" value="#{userListBean.phone}"
+									required="false"  />
+
+								
+							</h:panelGrid>
+							<p:commandButton value="Search"
+								action="#{userListBean.search()}" icon="pi pi-check" 
+								process="@form" update=":userListForm" /> 
+						</h:form>
+					</h:panelGrid>
+				</p:panel>
+			</div>
+			<div class="ui-g-2"></div>
+		</div>
+		<div class="ui-g">
+<!-- 			<div class="ui-g-2"></div> -->
+			<div class="ui-g-12">
+				<h1 style="text-align: center">List users</h1>
+				<h:form id="userListForm">
+					<p:dataTable widgetVar="userList" id="userList"
+						value="#{userListBean.users}" var="user"
+						filteredValue="#{userListBean.filteredUserList}"
+						rowKey="#{user.id}" lazy="true" sortMode="multiple"
+						selection="#{userListBean.selectedUserList}"
+						resizableColumns="true" rows="20" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="10,20,50">>
+
+						<f:facet name="header">
+							<p:outputPanel>
+								<h:outputText value="Search all fields: " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('userList').filter()" style="width:150px"
+									placeholder="Enter keyword" />
+							</p:outputPanel>
+						</f:facet>
+
+						<p:column selectionMode="multiple"
+							style="width:16px;text-align:center" />
+
+						<p:column filterBy="#{user.code}"
+							headerText="User ID" filterMatchMode="contains">
+							<h:outputText value="#{user.code}" />
+						</p:column>
+
+						<p:column filterBy="#{user.fullName}" headerText="Full Name"
+							filterMatchMode="contains">
+							<h:outputText value="#{user.fullName}" />
+						</p:column>
+
+						<p:column filterBy="#{user.email}" headerText="Email"
+							filterMatchMode="contains">
+							<h:outputText value="#{user.email}" />
+						</p:column>
+
+						<p:column headerText="Status"
+							sortBy="#{user.locked}">
+							<h:outputText value="#{!user.locked}">
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Action" >
+							<h:link outcome="user" value="Edit"
+								styleClass="pi pi-pencil">
+								<f:param name="id" value="#{user.id}" />
+							</h:link>
+						</p:column>
+
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column colspan="5" style="text-align:right"
+									footerText="Total Rows" />
+								<p:column footerText="#{userListBean.users.rowCount}" />
+							</p:row>
+						</p:columnGroup>
+
+						<f:facet name="footer">
+							<p:commandButton process="userList"
+								update=":userListForm:multiUserDetail"
+								icon="pi pi-search" value="View"
+								oncomplete="PF('multiUserDialog').show()" />
+						</f:facet>
+					</p:dataTable>
+
+					<p:contextMenu  for="userList">
+						<p:menuitem value="View selected" update="multiUserDetail"
+							icon="pi pi-search" oncomplete="PF('multiUserDialog').show()" />
+						<p:menuitem value="Delete selected" update="userList"
+							icon="pi pi-times" action="#{userListBean.deleteUsers}" />
+					</p:contextMenu>
+
+					<p:dialog header="Selected Users"
+						widgetVar="multiUserDialog" modal="true" showEffect="fade"
+						hideEffect="fade" resizable="true" width="450">
+						<p:outputPanel id="multiUserDetail" style="text-align:center;">
+							<ui:repeat value="#{userListBean.selectedUserList}"
+								var="user">
+								<h:outputText
+									value="#{user.code} - #{user.fullName} - #{user.phone}"
+									style="display:block" />
+								<h:outputText value="#{user.type}">
+									<f:convertNumber type="currency" currencySymbol="$" />
+								</h:outputText>
+							</ui:repeat>
+						</p:outputPanel>
+					</p:dialog>
+				</h:form>
+			</div>
+			<div class="ui-g-2" />
+		</div>
+		<ui:insert name="footer">
+			<ui:include src="/WEB-INF/common/footer.xhtml" />
+		</ui:insert>
+	</p:outputPanel>
+</h:body>
+</html>
